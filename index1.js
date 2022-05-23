@@ -8,6 +8,28 @@ const express = require("express");
 const mongoose = require("mongoose");
 const routes = require("./routes");
 
+//const routes = require("./routes/routes.js"); 
+
+//const fetch = require('node-fetch');
+import fetch from 'node-fetch';
+
+console.log("Hello! - fetching");
+
+const url = 'http://localhost:3000/api/getAll';
+
+fetch(url)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data[0].age);
+});
+
+const url2 = 'http://localhost:3000/api/getOne/627e185e14574a4a406caa9d';
+
+console.log("Done.");
+
+
 mongoose
   .connect("mongodb://localhost:27017/acmedb", { useNewUrlParser: true })
   .then(() => {
@@ -86,10 +108,7 @@ async function login(){
     await sleep();
     let isValid = false;
 
-    const allClients = router.get("/clients", async (req, res) => {
-        const clients = await Client.find();
-        res.send(clients);
-    });
+    getAll();
 
     if (map.size == 0) {
         spinner.error({ text: `Invalid credentials` });
