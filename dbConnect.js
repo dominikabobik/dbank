@@ -35,7 +35,6 @@ export async function withdraw(amount, username){
 
 export async function deposit(amount, user){
   let newBalance = parseFloat(user.balance) + parseFloat(amount)
-  console.log(`new balance to be updated ${newBalance}`)
   const { data1, error1 } = await supabase
   .from('users')
   .update({ balance: newBalance })

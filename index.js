@@ -4,10 +4,9 @@ import chalkAnimation from 'chalk-animation';
 import figlet from 'figlet';
 import { createSpinner } from 'nanospinner';
 import * as db from './dbConnect.js'
+
 const sleep = (ms = 1000) => new Promise((r) => setTimeout(r, ms));
-
 console.log(figlet.textSync('Welcome to DBank!', {}));
-
 db.connect()
 let user
 
@@ -67,7 +66,7 @@ async function login(){
     const spinner = createSpinner('Checking answer...\n').start()
     await sleep()
     user = await db.findUser(username)
-    console.log(user)
+
     let isValid = false;
     if (!user) {
         console.log(user)
@@ -81,7 +80,6 @@ async function login(){
         spinner.success({ text: `Logged in` })
         action();
     } else {
-        console.log(user)
         spinner.error({ text: `Invalid credentials` })
         login();
     }
@@ -100,15 +98,15 @@ async function createAccount(){
         });
     
         newUsername = usernameInput.askUsername;
-
         let data = await db.findUser(newUsername)
-
-        if (data.username == newUsername) {
-            console.log(data)
+        if (!data){
+            break
+        }
+        if (data.username === newUsername){
             console.log('Username already exists, please pick different one\n')
         }
-        else {
-            break;
+        else{
+            break
         }
     }
 
@@ -154,7 +152,8 @@ async function action(){
     }
 }
 
-function checkBalance () {
+async function checkBalance () {
+    user = await db.findUser(user.username)
     console.log('Your current balance is: '+ user.balance + '\n');
     action();
 }
@@ -165,7 +164,6 @@ async function deposit() {
         type: 'input',
         message: 'How much would you like to deposit?',
     });
-    console.log(`Deposit to user ${user.username}`)
     await db.deposit(input.askDeposit, user)
     console.log('Deposit sucessfully completed.\n');
     action();
