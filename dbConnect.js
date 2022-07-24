@@ -28,14 +28,22 @@ export async function findUser(username) {
   return data[0];
 }
 
-export async function withdraw(amount, username){
-  
-
+export async function withdraw(amount, user){
+	let newBalance = parseFloat(user.balance) - parseFloat(amount)
+	if (newBalance < 0){
+		return false;
+	} else {
+		const { data, error } = await supabase
+  		.from('users')
+  		.update({ balance: newBalance })
+  		.match({ username: user.username})
+		return true;
+	}
 }
 
 export async function deposit(amount, user){
   let newBalance = parseFloat(user.balance) + parseFloat(amount)
-  const { data1, error1 } = await supabase
+  const { data, error } = await supabase
   .from('users')
   .update({ balance: newBalance })
   .match({ username: user.username})

@@ -39,9 +39,11 @@ async function promptUser() {
     });
     
     if (hasAccount.askAccount.localeCompare("Yes") == 0) {
+        console.log('\n')
         login();
     } else {
         console.log('Create account');
+        console.log('\n')
         createAccount();
     }
 }
@@ -71,6 +73,7 @@ async function login(){
     if (!user) {
         console.log(user)
         spinner.error({ text: `Invalid credentials` })
+        console.log('\n')
         login()
     } else {
         if( user.password === password ) { isValid = true; }
@@ -78,9 +81,11 @@ async function login(){
 
     if (isValid){
         spinner.success({ text: `Logged in` })
+        console.log('\n')
         action();
     } else {
         spinner.error({ text: `Invalid credentials` })
+        console.log('\n')
         login();
     }
 }
@@ -155,6 +160,7 @@ async function action(){
 async function checkBalance () {
     user = await db.findUser(user.username)
     console.log('Your current balance is: '+ user.balance + '\n');
+    console.log('\n')
     action();
 }
 
@@ -166,6 +172,7 @@ async function deposit() {
     });
     await db.deposit(input.askDeposit, user)
     console.log('Deposit sucessfully completed.\n');
+    console.log('\n')
     action();
 }
 
@@ -175,12 +182,13 @@ async function withdrawal() {
         type: 'input',
         message: 'How much would you like to withdraw?',
     });
-    if (+data.balance < +input.askWithdrawal) {
-        console.log(chalk.bgRed('The amount you have entered exceeds your balance\n'));
+    let isSuccess = await db.withdraw(input.askWithdrawal, user)
+    if (!isSuccess) {
+        console.log(chalk.bgRed('The amount you have entered exceeds your balance\n'))
+        console.log('\n')
     } else {
-        data.balance -= +input.askWithdrawal;
-        map.set(username, data);
-        console.log('Withdrawal sucessfully completed. Your current balance is: ' + data.balance + '\n');
+        console.log('Withdrawal sucessfully completed.')
+        console.log('\n')
     }
     action();   
 }
